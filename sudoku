@@ -1,0 +1,276 @@
+import tkinter as tk
+
+def can_solve():
+    option = int(a.get()) + int(b.get())
+    board = boards[option]
+    if solve_sudoku(board) == True:
+        reset()
+        x = 27
+        for i in range(9):
+            if i == 0:
+                y = 26
+            else:
+                y = y + 46
+            for j in range(9):
+                if board[i][j] != 0:
+                    box = c.create_text(x, y, text=board[i][j], font=14)
+                x = x + 50
+            x = 27
+    else:
+        print("Fail")
+
+
+def solve_sudoku(board):
+    row = -1
+    col = -1
+    isEmpty = True
+    for i in range(9):
+        for j in range(9):
+            if board[i][j] == 0:
+                row = i
+                col = j
+                isEmpty = False
+                break
+        if isEmpty == False:
+            break
+    if isEmpty == True:
+        return True
+    for i in range(1, 10):
+        if is_safe(board, row, col, i):
+            board[row][col] = i
+            if solve_sudoku(board):
+                return True
+            else:
+                board[row][col] = 0
+    return False
+
+
+def is_safe(board, row, col, num):
+    for i in range(9):
+        if board[row][i] == num:
+            return False
+    for i in range(9):
+        if board[i][col] == num:
+            return False
+    boxRowStart = row - row%3
+    boxColStart = col - col%3
+    for i in range(boxRowStart, boxRowStart+3):
+        for j in range(boxColStart, boxColStart+3):
+            if board[i][j] == num:
+                return False
+    return True
+
+
+
+def reset():
+    solveBoard.configure(state=tk.DISABLED)
+    c.delete("all")
+    x = 2
+    y = 2
+    for i in range(10):
+        if i == 3 or i == 6:
+            line = c.create_line(0, x, 452, x, width=2)
+        else:
+            line = c.create_line(0, x, 452, x)
+        x = x + 46
+
+    for i in range(10):
+        if i == 3 or i == 6:
+            line = c.create_line(y, 0, y, 417, width=2)
+        else:
+            line = c.create_line(y, 0, y, 417)
+        y = y + 50
+
+
+def print_board():
+    reset()
+    option = int(a.get()) + int(b.get())
+    solveBoard.configure(state=tk.ACTIVE)
+    board = boards[option]
+    x = 27
+    for i in range(9):
+        if i == 0:
+            y = 26
+        else:
+            y = y + 46
+        for j in range(9):
+            if board[i][j] != 0:
+                box = c.create_text(x, y, text=board[i][j], font=14)
+            x = x + 50
+        x = 27
+
+
+easy1 = [[3, 0, 2, 5, 9, 1, 8, 0, 0],
+         [0, 0, 0, 0, 8, 0, 0, 0, 5],
+         [8, 0, 0, 0, 0, 2, 7, 9, 3],
+         [0, 8, 0, 0, 0, 0, 3, 7, 4],
+         [0, 0, 0, 4, 0, 8, 0, 0, 0],
+         [1, 4, 3, 0, 0, 0, 0, 2, 0],
+         [6, 2, 4, 3, 0, 0, 0, 0, 7],
+         [7, 0, 0, 0, 6, 0, 0, 0, 0],
+         [0, 0, 8, 2, 1, 7, 4, 0, 9]]
+
+easy2 = [[0, 6, 8, 0, 0, 2, 0, 1, 0],
+         [0, 0, 4, 0, 1, 7, 0, 0, 0],
+         [0, 5, 0, 4, 0, 0, 0, 0, 7],
+         [0, 8, 6, 7, 0, 1, 0, 0, 0],
+         [0, 2, 7, 5, 0, 4, 6, 8, 0],
+         [0, 0, 0, 2, 0, 8, 1, 7, 0],
+         [3, 0, 0, 0, 0, 9, 0, 5, 0],
+         [0, 0, 0, 1, 7, 0, 9, 0, 0],
+         [0, 7, 0, 8, 0, 0, 3, 4, 0]]
+
+easy3 = [[2, 0, 8, 0, 9, 1, 0, 0, 5],
+         [0, 0, 0, 0, 8, 0, 3, 4, 0],
+         [4, 0, 5, 0, 6, 3, 0, 0, 9],
+         [0, 0, 2, 0, 4, 5, 0, 0, 0],
+         [3, 0, 7, 0, 0, 0, 5, 0, 1],
+         [0, 0, 0, 1, 7, 0, 4, 0, 0],
+         [7, 0, 0, 9, 3, 0, 1, 0, 8],
+         [0, 9, 6, 0, 1, 0, 0, 0, 0],
+         [1, 0, 0, 7, 5, 0, 6, 0, 4]]
+
+med1 = [[0, 1, 0, 2, 0, 0, 0, 6, 5],
+        [0, 0, 0, 6, 0, 0, 0, 4, 0],
+        [0, 3, 0, 0, 0, 5, 8, 0, 2],
+        [0, 0, 0, 0, 0, 0, 6, 2, 4],
+        [5, 0, 0, 0, 0, 0, 0, 0, 9],
+        [7, 2, 8, 0, 0, 0, 0, 0, 0],
+        [6, 0, 2, 5, 0, 0, 0, 7, 0],
+        [0, 7, 0, 0, 0, 6, 0, 0, 0],
+        [3, 4, 0, 0, 0, 7, 0, 5, 0]]
+
+med2 = [[6, 9, 0, 7, 0, 0, 0, 0, 0],
+        [2, 0, 8, 0, 1, 0, 0, 6, 0],
+        [0, 3, 0, 0, 0, 4, 0, 0, 0],
+        [0, 0, 5, 4, 0, 0, 6, 9, 0],
+        [4, 0, 0, 2, 0, 1, 0, 0, 3],
+        [0, 7, 2, 0, 0, 6, 1, 0, 0],
+        [0, 0, 0, 8, 0, 0, 0, 5, 0],
+        [0, 2, 0, 0, 5, 0, 9, 0, 8],
+        [0, 0, 0, 0, 0, 2, 0, 4, 6]]
+
+med3 = [[0, 0, 0, 0, 0, 0, 5, 8, 0],
+        [0, 0, 0, 1, 7, 2, 0, 4, 0],
+        [0, 0, 9, 0, 0, 4, 0, 2, 0],
+        [0, 0, 0, 0, 1, 3, 0, 7, 0],
+        [9, 2, 5, 0, 0, 0, 8, 3, 1],
+        [0, 3, 0, 2, 9, 0, 0, 0, 0],
+        [0, 8, 0, 7, 0, 0, 4, 0, 0],
+        [0, 7, 0, 6, 8, 1, 0, 0, 0],
+        [0, 9, 6, 0, 0, 0, 0, 0, 0]]
+
+hard1 = [[0, 0, 0, 5, 7, 0, 6, 0, 0],
+         [7, 6, 2, 0, 4, 8, 0, 0, 0],
+         [0, 8, 0, 0, 0, 1, 0, 0, 0],
+         [0, 2, 1, 0, 0, 0, 0, 0, 6],
+         [3, 0, 0, 0, 0, 0, 0, 0, 4],
+         [6, 0, 0, 0, 0, 0, 9, 7, 0],
+         [0, 0, 0, 4, 0, 0, 0, 9, 0],
+         [0, 0, 0, 8, 3, 0, 5, 6, 7],
+         [0, 0, 9, 0, 1, 6, 0, 0, 0]]
+
+hard2 = [[0, 0, 0, 0, 7, 0, 0, 0, 5],
+         [7, 1, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 5, 6, 8, 0, 4, 0, 0],
+         [2, 0, 9, 0, 0, 8, 0, 3, 0],
+         [0, 3, 0, 0, 9, 0, 0, 8, 0],
+         [0, 6, 0, 5, 0, 0, 7, 0, 9],
+         [0, 0, 6, 0, 3, 2, 1, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 5, 4],
+         [4, 0, 0, 0, 1, 0, 0, 0, 0]]
+
+hard3 = [[5, 0, 0, 9, 2, 0, 0, 7, 0],
+         [0, 0, 0, 0, 0, 1, 0, 0, 0],
+         [1, 0, 0, 0, 0, 0, 0, 5, 6],
+         [4, 0, 2, 0, 9, 0, 0, 0, 0],
+         [7, 0, 0, 3, 0, 2, 0, 0, 0],
+         [0, 0, 9, 5, 6, 0, 0, 0, 0],
+         [0, 0, 0, 0, 8, 0, 1, 0, 2],
+         [0, 6, 0, 7, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 4]]
+
+boards = [easy1, easy2, easy3, med1, med2, med3, hard1, hard2, hard3]
+
+
+def enable_button():
+    solveBoard.configure(state=tk.ACTIVE)
+    solveBoard.configure(bg="light gray")
+
+
+
+root = tk.Tk()
+root.geometry("700x600")
+root.configure(bg="light gray")
+root.title("SUDOKU SOLVER")
+
+a = tk.IntVar()
+a.set(0)
+b = tk.IntVar()
+b.set(0)
+
+topFrame = tk.Frame(root, bg="light gray", height=50, width=1000)
+topFrame.grid(row=0, sticky=tk.EW)
+
+lab = tk.Label(topFrame, bg="light gray", text="Choose a difficulty and a board option", font=("Tahoma", 16))
+lab.pack(anchor=tk.NW)
+
+frame2 = tk.Frame(root, bg="light gray", height=100, width=1000)
+frame2.grid(row=1, sticky=tk.EW)
+
+
+easy = tk.Radiobutton(frame2, text="Easy", variable=a, value=0)
+easy.configure(bg="light gray")
+easy.grid(row=0, column=0, sticky=tk.W)
+medium = tk.Radiobutton(frame2, text="Medium", variable=a, value=3)
+medium.configure(bg="light gray")
+medium.grid(row=1, column=0, sticky=tk.W)
+hard = tk.Radiobutton(frame2, text="Hard", variable=a, value=6)
+hard.configure(bg="light gray")
+hard.grid(row=2, column=0, sticky=tk.W)
+
+opt1 = tk.Radiobutton(frame2, text="Board 1", variable=b, value=0)
+opt1.configure(bg="light gray")
+opt1.grid(row=0, column=1, sticky=tk.W)
+opt2 = tk.Radiobutton(frame2, text="Board 2", variable=b, value=1)
+opt2.configure(bg="light gray")
+opt2.grid(row=1, column=1, sticky=tk.W)
+opt3 = tk.Radiobutton(frame2, text="Board 3", variable=b, value=2)
+opt3.configure(bg="light gray")
+opt3.grid(row=2, column=1, sticky=tk.W)
+
+frame3 = tk.Frame(root, bg="light gray", height=150, width=1000)
+frame3.grid(row=2, sticky=tk.EW)
+
+
+displayBoard = tk.Button(frame3, bg="light gray", text="Display board", width=12, command=print_board)
+displayBoard.grid(row=0, sticky=tk.W)
+solveBoard = tk.Button(frame3, bg="light gray", text="Solve board", width=12, state=tk.DISABLED)
+solveBoard.grid(row=1, sticky=tk.W)
+solveBoard.configure(command=can_solve)
+
+
+frame4 = tk.Frame(root, bg="light gray", height=630, width=630)
+frame4.grid(row=3, sticky=tk.NSEW)
+
+c = tk.Canvas(frame4, height=417, width=452, bg="light gray")
+c.pack()
+
+x = 2
+y = 2
+for i in range(10):
+    if i == 3 or i == 6:
+        line = c.create_line(0, x, 452, x, width=2)
+    else:
+        line = c.create_line(0, x, 452, x)
+    x = x + 46
+
+for i in range(10):
+    if i == 3 or i == 6:
+        line = c.create_line(y, 0, y, 417, width=2)
+    else:
+        line = c.create_line(y, 0, y, 417)
+    y = y + 50
+
+
+root.mainloop()
