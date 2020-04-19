@@ -1,5 +1,8 @@
 import tkinter as tk
 
+
+# Function that calls the solve_sudoku function. If that function returns true,
+# prints out the solved board. Otherwise, prints out a "Fail" message.
 def can_solve():
     option = int(a.get()) + int(b.get())
     board = boards[option]
@@ -20,6 +23,7 @@ def can_solve():
         print("Fail")
 
 
+# Main solving function
 def solve_sudoku(board):
     row = -1
     col = -1
@@ -45,13 +49,17 @@ def solve_sudoku(board):
     return False
 
 
+# Function to check whether a box is safe to put a certain number
 def is_safe(board, row, col, num):
+    # Checks if number is already in row
     for i in range(9):
         if board[row][i] == num:
             return False
+    # Checks if number is already in column
     for i in range(9):
         if board[i][col] == num:
             return False
+    # Checks if number is already in the current 3x3 box
     boxRowStart = row - row%3
     boxColStart = col - col%3
     for i in range(boxRowStart, boxRowStart+3):
@@ -61,7 +69,7 @@ def is_safe(board, row, col, num):
     return True
 
 
-
+# Clears the canvas then reprints the 9x9 sudoku grid
 def reset():
     solveBoard.configure(state=tk.DISABLED)
     c.delete("all")
@@ -82,6 +90,8 @@ def reset():
         y = y + 50
 
 
+# Prints the board configuration. First calls the "reset()" function
+# to reset the grid, then prints the numbers
 def print_board():
     reset()
     option = int(a.get()) + int(b.get())
@@ -100,6 +110,7 @@ def print_board():
         x = 27
 
 
+# Some hardcoded starting configurations
 easy1 = [[3, 0, 2, 5, 9, 1, 8, 0, 0],
          [0, 0, 0, 0, 8, 0, 0, 0, 5],
          [8, 0, 0, 0, 0, 2, 7, 9, 3],
@@ -190,35 +201,44 @@ hard3 = [[5, 0, 0, 9, 2, 0, 0, 7, 0],
          [0, 6, 0, 7, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0, 0, 0, 4]]
 
+# Adds the hardcoded starting configurations to a list
 boards = [easy1, easy2, easy3, med1, med2, med3, hard1, hard2, hard3]
 
 
+# Allows the "Solve board" button to become enabled for clicking
 def enable_button():
     solveBoard.configure(state=tk.ACTIVE)
     solveBoard.configure(bg="light gray")
 
 
-
+# Root window created
 root = tk.Tk()
 root.geometry("700x600")
 root.configure(bg="light gray")
 root.title("SUDOKU SOLVER")
 
+# Integer variables that will be tied to the difficulty radio buttons and
+# the board option radio buttons. Stores a value based on which radio
+# buttons are selected that will determine which starting board is displayed.
 a = tk.IntVar()
 a.set(0)
 b = tk.IntVar()
 b.set(0)
 
+# The topmost frame
 topFrame = tk.Frame(root, bg="light gray", height=50, width=1000)
 topFrame.grid(row=0, sticky=tk.EW)
 
+# Label that is displayed in the topmost frame
 lab = tk.Label(topFrame, bg="light gray", text="Choose a difficulty and a board option", font=("Tahoma", 16))
 lab.pack(anchor=tk.NW)
 
+# Second frame created that will store the radio buttons
 frame2 = tk.Frame(root, bg="light gray", height=100, width=1000)
 frame2.grid(row=1, sticky=tk.EW)
 
 
+# Easy, medium, and hard radio buttons
 easy = tk.Radiobutton(frame2, text="Easy", variable=a, value=0)
 easy.configure(bg="light gray")
 easy.grid(row=0, column=0, sticky=tk.W)
@@ -229,6 +249,7 @@ hard = tk.Radiobutton(frame2, text="Hard", variable=a, value=6)
 hard.configure(bg="light gray")
 hard.grid(row=2, column=0, sticky=tk.W)
 
+# Radio buttons for board options 1, 2, and 3
 opt1 = tk.Radiobutton(frame2, text="Board 1", variable=b, value=0)
 opt1.configure(bg="light gray")
 opt1.grid(row=0, column=1, sticky=tk.W)
@@ -239,23 +260,31 @@ opt3 = tk.Radiobutton(frame2, text="Board 3", variable=b, value=2)
 opt3.configure(bg="light gray")
 opt3.grid(row=2, column=1, sticky=tk.W)
 
+# Frame that will store the "Display board" and "solve Board" buttons
 frame3 = tk.Frame(root, bg="light gray", height=150, width=1000)
 frame3.grid(row=2, sticky=tk.EW)
 
 
+# "Display board" and "Solve board" buttons
 displayBoard = tk.Button(frame3, bg="light gray", text="Display board", width=12, command=print_board)
 displayBoard.grid(row=0, sticky=tk.W)
+# This button is initially set to DISABLED and only becomes ACTIVE after "Display board" has been
+# clicked. The board cannot be solved before it has been displayed.
 solveBoard = tk.Button(frame3, bg="light gray", text="Solve board", width=12, state=tk.DISABLED)
 solveBoard.grid(row=1, sticky=tk.W)
+# The function "can_solve" is tied to clicking this button
 solveBoard.configure(command=can_solve)
 
 
+# Frame that will hold the canvas in which the sudoku grid will be stored
 frame4 = tk.Frame(root, bg="light gray", height=630, width=630)
 frame4.grid(row=3, sticky=tk.NSEW)
 
+# Canvas created to store the sudoku grid
 c = tk.Canvas(frame4, height=417, width=452, bg="light gray")
 c.pack()
 
+# Lines for the sudoku grid
 x = 2
 y = 2
 for i in range(10):
@@ -273,4 +302,5 @@ for i in range(10):
     y = y + 50
 
 
+# Starts the GUI
 root.mainloop()
